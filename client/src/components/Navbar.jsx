@@ -15,6 +15,10 @@ function Navbar() {
         <img className="w-32 sm:w-44" src={assets.logo} alt="logo" />
       </Link>
 
+      <Link to="/" className="text-white rounded-full py-2 px-2.5 bg-blue-800">Home </Link>
+      <Link to="/buy" className="text-white rounded-full py-2 px-2.5 bg-blue-800">Buy Credits </Link>
+      <Link to="/result" className="text-white rounded-full py-2 px-2.5 bg-blue-800">Result </Link>
+
       {/* Enhanced 'Get Started' Button */}
       <button
         className="
