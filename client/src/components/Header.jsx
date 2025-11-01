@@ -1,7 +1,9 @@
 import React from 'react'
+
 import { assets } from '../assets/assets'
 
 function Header() {
+
   return (
     <>
     <div className='
@@ -26,7 +28,7 @@ function Header() {
         </h1>
 
         <div className='mt-10'>
-            <input type='file' name='' id='upload1' hidden />
+            <input type='file' accept='image/*' id='upload1' hidden />
             {/* Fixed Button: Removed 'opacity-0' and animation classes/styles */}
             <label 
                 className='
