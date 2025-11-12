@@ -1,7 +1,11 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContext';
 
 function Upload() {
+  const { removeBg }=useContext(AppContext);
+
   return (
     // Main container with gradient background and enhanced padding
     <div className='py-20 md:py-32 lg:py-40 bg-gradient-to-br from-blue-500 to-purple-300 relative overflow-hidden'>
@@ -20,7 +24,7 @@ function Upload() {
       </h1>
 
       <div className='text-center relative z-10'>
-        <input type='file' name='' id='upload2' hidden />
+        <input onChange={e => removeBg(e.target.files[0])} type='file' accept='image/*' id='upload2' hidden />
         <label 
           className='
             inline-flex items-center gap-3 
