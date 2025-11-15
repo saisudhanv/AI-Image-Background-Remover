@@ -1,7 +1,12 @@
 import React from 'react'
 import { assets } from '../assets/assets'
+import { useContext } from 'react'
+import { AppContext } from '../context/AppContext'
+
 
 function Result() {
+
+  const { resultImage, image } = useContext(AppContext);
   return (
     <div className='mx-4 my-3 lg:mx-44 mt-14 min-h-[75vh]'>
 
@@ -13,20 +18,23 @@ function Result() {
           <div>
 
             <p className='font-semibold text-gray-600 mb-2'>Original</p>
-            <img className='rounded-md border' src={assets.image_w_bg} alt="with bg" />
+            <img className='rounded-md border' src={image ? URL.createObjectURL(image): ''} alt="with bg" />
 
           </div>
 
           <div>
             <p className='font-semibold text-gray-600 mb-2'>Background removed</p>
             <div className='rounded-md border border-gray-300 relative bg-layer overflow-hidden'>
-              <img src={assets.image_wo_bg} alt="without bg" />
-
-              {/* <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2'>
+              <img src={resultImage ? resultImage: ''} alt="without bg" />
+              {
+                !resultImage && image && <div className='absolute right-1/2 bottom-1/2 transform translate-x-1/2 translate-y-1/2'>
                 <div className='border-4 border-violet-600 rounded-full h-12 w-12 border-t-transparent animate-spin'>
 
                 </div>
-              </div> */}
+              </div>
+              }
+
+              
             </div>
 
           </div>
