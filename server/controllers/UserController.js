@@ -1,5 +1,6 @@
 import { Webhook } from "svix";
 import userModel from "../models/userModel.js";
+import transactionModel from "../models/transactionModel.js";
 import razorpay from "razorpay";
 
 
@@ -79,10 +80,10 @@ const userCredits = async (req, res) => {
 };
 
 // gateway initialize
-// const razorpayInstance = new razorpay({
-//     key_id: process.env.RAZORPAY_KEY_ID,
-//     key_secret: process.env.RAZORPAY_KEY_SECRET
-// });
+const razorpayInstance = new razorpay({
+    key_id: process.env.RAZORPAY_KEY_ID,
+    key_secret: process.env.RAZORPAY_KEY_SECRET
+});
 
 const paymentRazorpay = async (req, res) => {
     try{
@@ -113,6 +114,31 @@ const paymentRazorpay = async (req, res) => {
                 break;
         }
         date = Date.now();
+
+        // Creating transactions
+        const transactionData = {
+            clerkId,
+            plan,
+            amount,
+            credits,
+            date
+        };
+
+        const newTransaction = await transactionModel.create(transactionData);
+
+        const options = {
+            amount: amount * 100,  // amount in the smallest currency unit
+            currency: process.env.CURRENCY,
+            receipt: newTransaction._id
+        };
+
+        await razorpayInstance.orders.create(options, (error, order) => {
+            if(error){
+                return res.json({success:false, message:error});
+            }
+            res.json({success:true, order});
+        });
+
     }
     catch(error){
         console.log(error.message);
@@ -120,4 +146,26 @@ const paymentRazorpay = async (req, res) => {
     }
 };
 
-export {clerkWebhooks, userCredits};
+// API controller function to verify razorpay payment
+const verifyRazorpay = async (req, res) => {
+    try {
+        const { razorpay_order_id } = req.body;
+        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
+        
+        if(orderInfo.status === 'paid'){
+            const transactionData = await transactionModel.findById(orderInfo.receipt);
+            if(transactionData.payment){
+                return res.json({success:false, message:"Payment Failed"});
+        }
+    }
+        
+
+
+    } catch (error) {
+        console.log(error.message);
+        res.json({success:false, message:error.message});
+        
+    }
+}
+
+export {clerkWebhooks, userCredits, paymentRazorpay};
