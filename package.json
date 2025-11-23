@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "build": "cd client && npm ci && npm run build && rm -rf ../.build || true && mkdir -p ../.build && cp -r dist/* ../.build/",
+    "build": "node ./scripts/prepare-build.js",
     "start": "echo \"This repository is a monorepo. Start the specific app from its folder.\" && exit 0"
   }
 }
