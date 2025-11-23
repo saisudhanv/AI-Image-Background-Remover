@@ -9,7 +9,7 @@ import { toast } from 'react-toastify'
 
 function BuyCredit() {
 
-  const { backendURL, loadCreditsData } = useContext(AppContext);
+  const { backendURL, loadCreditsData, setCredit } = useContext(AppContext);
   const navigate = useNavigate();
   const { getToken} = useAuth();
   const initPay = async (order) => {
@@ -29,6 +29,27 @@ function BuyCredit() {
         receipt: order.receipt,
         handler: async (response) => {
           console.log(response);
+
+          const token = await getToken();
+          try {
+            const { data } = await axios.post(backendURL + '/api/user/verify-razor',response,{headers:{token}});
+            if (data.success) {
+              if (data.creditBalance !== undefined) {
+                setCredit(data.creditBalance);
+              } else {
+                // small delay to ensure DB write is visible when fetching
+                setTimeout(() => loadCreditsData(), 800);
+              }
+              navigate('/');
+              toast.success('Credits added');
+            } else {
+              toast.error(data.message || 'Verification failed');
+            }
+          }
+          catch (error) {
+            console.log(error);
+            toast.error(error.message);
+          }
         }
       }
       const rzp = new window.Razorpay(options);

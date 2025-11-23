@@ -149,17 +149,41 @@ const paymentRazorpay = async (req, res) => {
 // API controller function to verify razorpay payment
 const verifyRazorpay = async (req, res) => {
     try {
-        const { razorpay_order_id } = req.body;
-        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
-        
-        if(orderInfo.status === 'paid'){
-            const transactionData = await transactionModel.findById(orderInfo.receipt);
-            if(transactionData.payment){
-                return res.json({success:false, message:"Payment Failed"});
-        }
-    }
-        
 
+        const { razorpay_order_id } = req.body;
+        console.log('verifyRazorpay called with body:', req.body);
+        const orderInfo = await razorpayInstance.orders.fetch(razorpay_order_id);
+        console.log('razorpay orderInfo:', orderInfo && orderInfo.status);
+
+        if (orderInfo && orderInfo.status === 'paid') {
+            const transactionData = await transactionModel.findById(orderInfo.receipt);
+            if (!transactionData) {
+                console.error('No transaction found for receipt:', orderInfo.receipt);
+                return res.json({ success: false, message: 'Transaction not found' });
+            }
+
+            if (transactionData.payment) {
+                return res.json({ success: false, message: 'Payment already processed' });
+            }
+
+            // Adding credits in user data
+            const userData = await userModel.findOne({ clerkId: transactionData.clerkId });
+            if (!userData) {
+                console.error('No user found for clerkId:', transactionData.clerkId);
+                return res.json({ success: false, message: 'User not found' });
+            }
+
+            const creditBalance = (userData.creditBalance || 0) + (transactionData.credits || 0);
+            await userModel.findByIdAndUpdate(userData._id, { creditBalance });
+
+            // Making the payment true
+            await transactionModel.findByIdAndUpdate(transactionData._id, { payment: true });
+            console.log('Credits updated for user', userData._id, 'newBalance:', creditBalance);
+            return res.json({ success: true, message: 'Credits Added', creditBalance });
+        }
+
+        console.log('Order not paid yet, status:', orderInfo && orderInfo.status);
+        return res.json({ success: false, message: 'Order not paid', status: orderInfo && orderInfo.status });
 
     } catch (error) {
         console.log(error.message);
@@ -168,4 +192,4 @@ const verifyRazorpay = async (req, res) => {
     }
 }
 
-export {clerkWebhooks, userCredits, paymentRazorpay};
+export {clerkWebhooks, userCredits, paymentRazorpay, verifyRazorpay};
