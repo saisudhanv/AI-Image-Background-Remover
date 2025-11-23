@@ -1,7 +1,7 @@
 import React from 'react'
 import Header from '../components/Header'
 import Steps from '../components/Steps'
-import Bgslider from '../components/Bgslider'
+import BgSlider from '../components/BgSlider'
 import Testimonials from '../components/Testimonials'
 import Upload from '../components/Upload'
 
@@ -10,7 +10,7 @@ function Home() {
     <div>
       <Header />
       <Steps />
-      <Bgslider />
+      <BgSlider />
       <Testimonials />
       <Upload />
   

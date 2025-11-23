@@ -1,7 +1,7 @@
 import React from 'react'
 import { assets } from '../assets/assets';
 
-function Bgslider() {
+function BgSlider() {
 
     const [sliderPosition, setSliderPosition] = React.useState(50);
     const handleSliderChange = (event) => {
@@ -27,4 +27,4 @@ function Bgslider() {
   )
 }
 
-export default Bgslider
+export default BgSlider
