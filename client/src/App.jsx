@@ -1,11 +1,11 @@
 import React from 'react'
 import { Routes, Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Result from './pages/result'
-import BuyCredit from './pages/BuyCredit'
-import Navbar from './components/Navbar'
-import Header from './components/Header'
-import Footer from './components/Footer'
+import Home from './pages/Home.jsx'
+import Result from './pages/result.jsx'
+import BuyCredit from './pages/BuyCredit.jsx'
+import Navbar from './components/Navbar.jsx'
+import Header from './components/Header.jsx'
+import Footer from './components/Footer.jsx'
 import { ToastContainer, toast } from 'react-toastify';
 
 const App = () => {
